@@ -1,0 +1,35 @@
+Create a new website for GlaCK0N Tech – a premier phone services provider. The site should have a modern, sleek, and responsive design with clear navigation and engaging visuals. Include these sections:
+
+1. **Unlocking Services**
+   - **Carrier Unlocking:** Detail unlocking for major carriers (AT&T, T-Mobile, Verizon, etc.), permanent factory unlocks, with processing times from instant to 7 days.
+   - **iCloud Unlocking:** Information on activation lock removal (eligibility checks included) and Find My iPhone (FMI) status checks with processing times of 1-14 days.
+   - **Blacklist & IMEI Repair:** Overview of blacklisted phone restoration and IMEI cleaning/repair services, processing within 3-10 days.
+
+2. **FRP Removal Services**
+   - **Google FRP Bypass:** Explain the instant remote bypass for devices like Samsung and Huawei, with on-site options for other brands, processing in 10-30 minutes.
+   - **Samsung FRP Unlock (No Knox Trip):** Safe unlock services that avoid triggering Knox, with processing times of 10-60 minutes.
+
+3. **Refurbished & Pre-Owned Devices**
+   - **Certified Refurbished Phones:** Showcase unlocked, fully tested devices with warranty; list brands (Apple, Samsung, Huawei, Xiaomi, etc.).
+   - **Budget Pre-Owned Phones:** Present affordable options with quality checks, ready for immediate use.
+
+4. **Additional Services**
+   - **Software Repairs & Updates:** Describe Android & iOS flashing, software fixes, rooting, and jailbreaking services.
+   - **Hardware Repairs & Parts:** Include screen replacements, battery swaps, charging port, and button repairs.
+
+5. **Bulk Deals & Discounts**
+   - Provide information on special rates for phone shops and resellers along with bulk unlocking & FRP removal pricing.
+
+6. **Payment Methods**
+   - List accepted payment methods: Crypto, PayPal, Visa/Mastercard, and local cash payments (e.g., in Harare, Makoni Shopping Centre).
+
+7. **Contact Us**
+   - Clearly display contact details including WhatsApp, Email, and Website URL.
+
+Design Considerations:
+- Aesthetic, modern typography, and a professional color scheme.
+- Mobile-first responsive design.
+- Clear calls-to-action and easily accessible contact information.
+- Minimalist layout with visual hierarchy for an intuitive user experience.
+
+Build the final website design incorporating these elements and sections.
