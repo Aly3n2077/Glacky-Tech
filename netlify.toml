@@ -1,0 +1,16 @@
+[build]
+  base = "."
+  command = "./build-netlify.sh"
+  publish = "dist"
+
+[dev]
+  command = "npm run dev"
+  port = 3000
+  targetPort = 3000
+  publish = "dist/public"
+  framework = "#custom"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
