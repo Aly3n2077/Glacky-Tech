@@ -1,13 +1,13 @@
 [build]
   base = "."
   command = "chmod +x build-netlify.sh && ./build-netlify.sh"
-  publish = "dist/public"
+  publish = "dist"
 
 [dev]
   command = "npm run dev"
   port = 3000
   targetPort = 3000
-  publish = "dist/public"
+  publish = "dist"
   framework = "#custom"
 
 [[redirects]]
