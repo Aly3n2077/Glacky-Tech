@@ -1,16 +1,12 @@
 [build]
-  base = "."
-  command = "chmod +x build-netlify.sh && ./build-netlify.sh"
+  command = "npm run build"
   publish = "dist/public"
+
+[build.environment]
+  NODE_VERSION = "24"
 
 [dev]
   command = "npm run dev"
-  port = 3000
-  targetPort = 3000
-  publish = "dist/public"
+  port = 8889
+  targetPort = 5000
   framework = "#custom"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

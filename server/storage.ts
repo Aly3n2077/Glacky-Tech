@@ -1,39 +1,15 @@
-import { users, type User, type InsertUser } from "@shared/schema";
+import type { ContactFormData } from "../shared/contact.js";
 
-// modify the interface with any CRUD methods
-// you might need
-
-export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+export interface ContactStorage {
+  saveContact(data: ContactFormData): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  currentId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.currentId = 1;
-  }
-
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
-  }
-}
-
-export const storage = new MemStorage();
+export const storage: ContactStorage = {
+  async saveContact(data) {
+    const [{ db }, { contactMessages }] = await Promise.all([
+      import("../db/index.js"),
+      import("../db/schema.js"),
+    ]);
+    await db.insert(contactMessages).values(data);
+  },
+};
