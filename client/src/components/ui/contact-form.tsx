@@ -1,20 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { contactFormSchema, type ContactFormData } from "@shared/contact";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const contactFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  service: z.string().min(1, { message: "Please select a service." }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
-});
-
-type ContactFormData = z.infer<typeof contactFormSchema>;
 
 export default function ContactForm() {
   const { toast } = useToast();
@@ -30,7 +21,6 @@ export default function ContactForm() {
     defaultValues: {
       name: "",
       email: "",
-      service: "",
       message: ""
     }
   });
@@ -126,7 +116,8 @@ export default function ContactForm() {
       <div className="mb-6">
         <label htmlFor="service" className="font-orbitron text-sm block mb-2">Service Needed</label>
         <select 
-          id="service" 
+          id="service"
+          defaultValue=""
           className={`w-full bg-primary border ${errors.service ? 'border-red-500' : 'border-gray-700'} rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none transition-colors duration-300`}
           {...register("service")}
         >

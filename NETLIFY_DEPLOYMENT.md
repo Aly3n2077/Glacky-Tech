@@ -1,83 +1,56 @@
-# Deploying GlaCK0N Tech Website to Netlify
+# GlaCK0N Tech deployment and maintenance
 
-This guide provides instructions for deploying the GlaCK0N Tech website to Netlify.
+The site uses a Vite/React frontend and an Express API hosted by Netlify Server. Contact messages are saved in Netlify Database with Drizzle ORM. The former static deployment simulated successful submissions; it has been replaced by the real contact API.
 
-## Prerequisites
+## Deployment
 
-- A Netlify account
-- Git repository with your code
+Use Node.js 24 or later. Netlify reads the Node version and deployment settings from `netlify.toml`:
 
-## Setup for Netlify Deployment
+- Build command: `npm run build`
+- Publish directory: `dist/public`
+- Server entrypoint: `netlify/server/index.ts`
 
-### 1. Prepare the Repository
+The build compiles the frontend without rewriting source files. Netlify deploys the server entrypoint separately. Do not add a catch-all rewrite to `/index.html`: it would intercept `/api/contact` before the API receives requests. Static assets are served by Netlify; the server supplies the SPA fallback for client routes.
 
-The repository has been specially configured for Netlify deployment with:
-- `netlify.toml` - Configures build settings and redirects
-- `build-netlify.sh` - Custom build script for static deployment
-- `client/src/components/ui/static-contact-form.tsx` - Form that works without a backend API
-- Static assets in the appropriate locations
+`build-netlify.sh` remains a compatibility wrapper for the same build command.
 
-### 2. Deploy to Netlify
+## Database updates
 
-#### Option 1: Deploy from Git
+The database is provisioned automatically by Netlify. Application code uses `@netlify/database` through the Drizzle Netlify adapter; no manually managed connection string is required.
 
-1. Log in to your Netlify account
-2. Click "New site from Git"
-3. Connect to your Git provider (GitHub, GitLab, etc.)
-4. Select your repository
-5. In the deploy settings:
-   - **Build command**: `./build-netlify.sh`
-   - **Publish directory**: `dist`
-   - Click "Deploy site"
+1. Update `db/schema.ts`.
+2. Run `npm run db:generate -- --name descriptive_change_name`.
+3. Include the generated migration directory under `netlify/database/migrations` in the change.
 
-#### Option 2: Deploy from CLI
+Netlify applies pending migrations before publishing. Never run `drizzle-kit push`, apply migrations manually, or edit migrations that have already been deployed. Deploy previews use isolated database branches.
 
-1. Install Netlify CLI: `npm install netlify-cli -g`
-2. Log in to Netlify: `netlify login`
-3. Initialize your site: `netlify init`
-4. Follow the prompts and select your site
-5. Deploy: `netlify deploy --prod`
+The adapter requires the beta release line of both `drizzle-orm` and `drizzle-kit`; update those together and verify adapter compatibility.
 
-### 3. Form Handling
+## Contact API
 
-The contact form is configured to work with Netlify Forms:
+`POST /api/contact` accepts JSON with `name`, `email`, `service`, and `message`. The frontend and backend use the same validation rules in `shared/contact.ts`. Names and messages are trimmed and bounded, emails are validated, and service values must match the form's options. Request bodies are limited to 16 KB.
 
-1. When the site is deployed, Netlify will automatically detect the form
-2. You can view form submissions in the Netlify dashboard under "Forms"
-3. You can set up notifications for new form submissions
+The API returns:
 
-### 4. Environment Variables
+- `201` only after the database insert succeeds.
+- `400` for invalid fields or malformed JSON.
+- `413` for oversized request bodies.
+- `405` for unsupported contact endpoint methods.
+- `500` with a generic retry message if saving fails.
 
-If your application requires environment variables:
-1. Go to **Site settings** > **Build & deploy** > **Environment**
-2. Add any necessary environment variables
+Unknown API routes return JSON `404` responses. Contact response bodies are not cached. Customer messages and database error details are not written to application logs or returned in failure responses.
 
-## What to Expect
+Submissions are stored in the `contact_messages` table. No email notification or public submission listing is configured. Authorized operators can inspect submissions through Netlify's database tooling. The contact form does not use Netlify Forms.
 
-This deployment is a static version of the website optimized for Netlify:
+## Local development and verification
 
-1. All UI components and visual elements work as expected
-2. The contact form submissions will be processed by Netlify Forms
-3. The site is fully responsive and maintains the brand identity
+Install dependencies with `npm ci`. Run `netlify dev --port 8889` for local development with Netlify platform emulation. The Express development server listens on `PORT`, defaulting to 5000.
 
-## After Deployment
+Before submitting an update, run:
 
-After deploying, make sure to:
-1. Test the contact form to ensure submissions are being captured
-2. Verify that all routes are working (handled by the `_redirects` file)
-3. Check that all images and assets are loading properly
+```sh
+npm run check
+npm test
+```
 
-## Troubleshooting
-
-If you encounter any issues after deployment:
-1. Check Netlify deploy logs for errors
-2. Ensure form submissions are being captured in the Netlify dashboard
-3. Verify that the `netlify.toml` configuration is being applied correctly
-4. Check that the build script ran successfully
-
-## Advanced Configuration
-
-For more advanced needs:
-1. Netlify Functions can be added for backend logic
-2. Custom domains can be configured in the Netlify dashboard
-3. Additional form notifications can be set up (email, Slack, etc.)
+The API tests exercise validation, successful storage calls, safe database failures, payload limits, method handling, and unknown routes without writing customer data. After deployment, verify a contact submission in a deploy preview and confirm that its row appears in the preview database before testing production.
